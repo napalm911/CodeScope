@@ -1,0 +1,14 @@
+{
+    "project_path": "/home/user/my/path/my_project",
+    "project_name": "MyProject",
+    "file_extensions": [".js", ".ts", ".py"],
+    "ignore_directories": ["node_modules", ".git"],
+    "ignore_extensions": [".png", ".jpg"],
+    "ignore_patterns": ["^build", ".*\\.secret"],
+    "modified_after": "2023-01-01",
+    "threads": 4,
+    "use_checksum_cache": true,
+    "gather_js_summary": "js_summary.json",
+    "output_filename": "context.txt"
+  }
+  

@@ -1,90 +1,110 @@
-# **Tool Name: CodeScope**
+# **CodeScope**
 
 ## **Description**
-**CodeScope** is a Python-based tool that provides insights into your codebase by gathering detailed context from source files. It supports JavaScript, TypeScript, Python, and more, extracting meaningful metadata such as imports, functions, classes, and prototype methods. The tool also consolidates file contents, supports advanced filtering, and outputs in plain text or JSON format.
+**CodeScope** is a Python-based tool that provides insights into your codebase by gathering detailed context from source files. It supports JavaScript, TypeScript, Python, and more, extracting metadata such as imports, requires, functions, classes, and prototype methods. The tool also consolidates file contents, supports advanced filtering, and outputs in plain text or JSON format.
 
-Ideal for analyzing legacy projects, documenting code structures, or ensuring consistency, **CodeScope** includes features like compression, multi-threaded processing, and checksum caching for optimal performance.
+With features like multi-threaded processing, compression, and MD5 checksum caching, CodeScope is flexible and performant. You can also load or override configurations from a JSON file, allowing you to specify things like explicit file lists, custom ignore patterns, and more.
 
 ---
 
 ## **Features**
-- **File Consolidation:** Reads files of configurable extensions and writes their contents to a single output file.
-- **JS/TS Analysis:** Extracts metadata such as imports, requires, functions, classes, and prototype methods into a structured JSON summary.
-- **Advanced Filtering:** Supports filters based on size, modification date, directory, and regex patterns.
-- **Compression Support:** Compress output using gzip for efficient storage.
-- **Multi-threaded Performance:** Uses concurrent file reading for faster processing.
-- **Checksum Caching:** Skips unchanged files using MD5-based caching for incremental runs.
-- **Makefile Integration:** Simplifies usage with predefined commands.
+- **File Consolidation:** Reads files (via scanning or from an explicit list) and writes contents to a single output.
+- **JS/TS Analysis:** Extracts imports, requires, functions, classes, prototype methods, saved in a structured JSON summary.
+- **Advanced Filtering:** Filters by directory, filename patterns, file size, modification date, etc.
+- **Compression Support:** Generate gzip-compressed output if desired.
+- **Multi-Threaded:** Uses concurrent processing to speed up large codebases.
+- **Checksum Caching:** Detects unchanged files to skip re-processing for faster incremental runs.
+- **Config File Support:** Load or override defaults from a JSON config file (e.g., `my_config.json`).
 
 ---
 
 ## **Installation**
-1. Clone the repository:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/napalm911/CodeScope.git
    cd CodeScope
    ```
-2. Install dependencies using Poetry:
+2. **Install dependencies** (using Poetry or pip):
    ```bash
    poetry install
+   # Or:
+   # pip install -r requirements.txt
    ```
 
 ---
 
 ## **Usage**
-### Basic Commands
-Run the tool directly:
-```bash
-poetry run python unified_context.py --output context.txt
-```
 
-Compress the output:
-```bash
-poetry run python unified_context.py --compress --output context.txt.gz
-```
+### **Basic Commands**
 
-Generate a JSON summary of JavaScript/TypeScript structure:
-```bash
-poetry run python unified_context.py --gather-js-summary js_summary.json
-```
+- **Scan and output**:
+  ```bash
+  python main.py --output context.txt
+  ```
+- **Compress output**:
+  ```bash
+  python main.py --compress --output context.txt
+  ```
+- **JS/TS Summary**:
+  ```bash
+  python main.py --gather-js-summary js_summary.json
+  ```
+- **Date Filter**:
+  ```bash
+  python main.py --modified-after 2025-01-01 --output recent_context.txt
+  ```
+- **Checksum Caching**:
+  ```bash
+  python main.py --use-checksum
+  ```
+- **Load a Config File**:
+  ```bash
+  python main.py --config-file my_config.json
+  ```
 
-Filter files modified after a specific date:
+### **Using the Makefile**
+You can run:
 ```bash
-poetry run python unified_context.py --modified-after 2025-01-01 --output recent_context.txt
-```
-
-### Using the Makefile
-The tool includes a Makefile for easier execution:
-```bash
-make help              # Display available commands
-make run-all           # Gather all context into context.txt
-make run-compressed    # Same as above but compresses the output
-make run-js-summary    # Generate JS/TS structure summary in js_summary.json
-make clean             # Remove generated output files
-```
-
-Example:
-```bash
-make run-js-summary
+make help              # Show help
+make run-all           # Gather all code context into context.txt
+make run-compressed    # Same but gzipped
+make run-js-summary    # Gather JS/TS summary to js_summary.json
+make clean             # Remove output files
 ```
 
 ---
 
 ## **Configuration**
-Configuration options are in the `DEFAULT_CONFIG` section of the script. Key options include:
-- **`file_extensions`**: File types to include (e.g., `.py`, `.js`, `.ts`, etc.).
-- **`ignore_directories`**: Directories to exclude (e.g., `node_modules`, `.git`, etc.).
-- **`modified_after`**: Include files modified after a given date.
-- **`max_file_size`**: Maximum size of files to process.
-- **`compress_output`**: Option to gzip-compress output files.
-- **`use_checksum_cache`**: Enable caching for faster incremental runs.
+You can modify `DEFAULT_CONFIG` in `config.py`. Or provide a JSON config file (see `--config-file`). Example `my_config.json`:
+
+```json
+{
+  "file_extensions": [".js", ".ts", ".py"],
+  "ignore_directories": ["node_modules", ".git"],
+  "ignore_extensions": [".png", ".jpg"],
+  "ignore_patterns": ["^build", ".*\\.secret"],
+  "explicit_files": ["src/only_this_file.js", "lib/specific_file.py"],
+  "modified_after": "2023-01-01",
+  "threads": 4,
+  "use_checksum_cache": true,
+  "gather_js_summary": "my_js_summary.json",
+  "output_filename": "my_context.txt"
+}
+```
+
+When you run:
+```bash
+python main.py --config-file my_config.json
+```
+It will merge those overrides into the default configuration.
 
 ---
 
 ## **Example Output**
-### Text Output
-```plaintext
-client/src/__proto__.js
+
+### **Plain Text Output**
+```
+/home/max/CodeScope/client/src/__proto__.js
 "use strict"
 
 String.prototype.capitalize = function () { ... }
@@ -92,11 +112,11 @@ Function.prototype.TRUE = function () { ... }
 ...
 ```
 
-### JSON Summary
+### **JSON Summary**
 ```json
 [
   {
-    "file": "client/src/__proto__.js",
+    "file": "/home/max/CodeScope/client/src/__proto__.js",
     "imports": [],
     "requires": [],
     "functions": [],
@@ -128,8 +148,3 @@ Function.prototype.TRUE = function () { ... }
 
 ## **License**
 This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-
-## **Credits**
-Developed by **Max** and the open-source community. 🚀

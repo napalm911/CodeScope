@@ -1,23 +1,31 @@
-# Python-related files
+# Python-related
 *.pyc
 __pycache__/
 
-# Poetry files
+# Poetry
 poetry.lock
 
-# Output files
+# Output/context files
 context.txt
 context.txt.gz
 js_summary.json
 
-# Logs and temporary files
+# Checksum cache
+.file_checksums.json
+
+# Logs/Temp
 *.log
 *.tmp
 
-# IDE and editor settings
+# IDE/Editor
 .vscode/
 .idea/
-
-# Version control
 *.swp
 .DS_Store
+
+# Context outputs
+output/
+
+# Optional: config overrides if you don't want them committed
+my_config.json
+*_config.json
