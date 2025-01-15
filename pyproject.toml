@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "codescope"
+version = "0.1.0"
+description = ""
+authors = ["max-benzait <max.ramirez@benzait.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+rich = "^13.9.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

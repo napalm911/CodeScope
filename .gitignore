@@ -1,0 +1,23 @@
+# Python-related files
+*.pyc
+__pycache__/
+
+# Poetry files
+poetry.lock
+
+# Output files
+context.txt
+context.txt.gz
+js_summary.json
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# IDE and editor settings
+.vscode/
+.idea/
+
+# Version control
+*.swp
+.DS_Store
