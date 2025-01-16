@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "analysis-tool"
+version = "0.1.0"
+description = ""
+authors = ["Max Reyes <100148196+max-benzait@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+openai = "^1.59.7"
+tiktoken = "^0.8.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
