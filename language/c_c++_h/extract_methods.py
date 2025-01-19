@@ -1,5 +1,6 @@
 import re
 import os
+import json
 
 def extract_methods(file_path):
     """
@@ -49,18 +50,20 @@ def extract_methods(file_path):
     return methods
 
 if __name__ == "__main__":
-    # Replace with the path to your luascript.cpp file
+    # Replace with the path to your C++ file
     file_path = "luascript.cpp"
 
     if os.path.exists(file_path):
         methods = extract_methods(file_path)
         if methods:
-            print("Extracted Methods and Comments:")
-            for method in methods:
-                print(f"Method: {method['method']}")
-                if method['comments']:
-                    print(f"Comments: {method['comments']}")
-                print("-" * 40)
+            # Save methods to a JSON file
+            output_file = "methods.json"
+            try:
+                with open(output_file, 'w') as json_file:
+                    json.dump(methods, json_file, indent=4)
+                print(f"Extracted methods and comments have been saved to '{output_file}'.")
+            except Exception as e:
+                print(f"An error occurred while writing to JSON file: {e}")
         else:
             print("No methods found in the file.")
     else:
