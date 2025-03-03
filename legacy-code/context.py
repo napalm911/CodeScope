@@ -9,6 +9,7 @@ patterns, concurrent reading, optional compression, and more.
 Examples:
     python context.py --output context.txt --modified-after 2024-01-01
     python context.py --compress --ignore-pattern ".*secret.*"
+    python context.py --ignore-file "README.md" --ignore-file "setup.py"
 
 Author: You :)
 """
@@ -67,6 +68,9 @@ DEFAULT_CONFIG = {
         r'.*secret.*',     # Example: any directory or file with "secret" in its path
         r'.*\.log',        # Example: any .log files
     ],
+    'ignore_files': [      # Exact filenames to ignore
+        # Example: "setup.py", "README.md"
+    ],
     'modified_after': '2024-01-01',    # Date filter: only read files modified after this date
     'max_file_size': 2 * 1024 * 1024,  # 2 MB
     'recursive': True,
@@ -116,6 +120,12 @@ def parse_args():
         dest='ignore_patterns',
         action='append',
         help='Regex pattern to ignore. Can be specified multiple times.'
+    )
+    parser.add_argument(
+        '--ignore-file',
+        dest='ignore_files',
+        action='append',
+        help='Exact filename to ignore. Can be specified multiple times.'
     )
     parser.add_argument(
         '--use-checksum',
@@ -183,12 +193,17 @@ def should_ignore_file(
 ):
     """
     Returns True if the file should be ignored based on:
+    - Exact filename match in ignore_files
     - Ignored extensions
     - File size limit
     - Modified date
     - Regex ignore patterns
     - MD5 checksums (optional)
     """
+    # 0) Check if file name is in ignore_files
+    if os.path.basename(file_path) in config['ignore_files']:
+        return True
+    
     # 1) Check extension
     if any(file_path.endswith(ext) for ext in config['ignore_extensions']):
         return True
@@ -330,6 +345,10 @@ def main():
     # If user specified extra ignore patterns, merge them
     if args.ignore_patterns:
         config['ignore_patterns'].extend(args.ignore_patterns)
+    
+    # If user specified specific files to ignore, merge them
+    if args.ignore_files:
+        config['ignore_files'].extend(args.ignore_files)
 
     write_contents_to_file(config)
 
